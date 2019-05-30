@@ -183,16 +183,27 @@ LOGGING = {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
             'filename': os.path.join(os.path.dirname(BASE_DIR), "logs/meiduo.log"),  # 日志文件的位置
+            #日志文件的最大容量300m
             'maxBytes': 300 * 1024 * 1024,
+            #日志文件最大存储个数  10
             'backupCount': 10,
+            #日志文件的存储格式  复杂
             'formatter': 'verbose'
         },
     },
-    
+
     'loggers': {
         'django': {  # 定义了一个名为django的日志器
             'handlers': ['console', 'file'],
             'propagate': True,
         },
     }
+}
+
+
+#drf配置
+
+REST_FRAMEWORK = {
+    # 异常处理
+    'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
