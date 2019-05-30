@@ -200,9 +200,7 @@ LOGGING = {
     }
 }
 
-
 #drf配置
-
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
