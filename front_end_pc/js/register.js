@@ -24,13 +24,13 @@ var vm = new Vue({
 		image_code_url:''
 	},
 	mounted: function() {
-
+			this.generate_image_code()
 	},
 	methods: {
 		 // 生成一个图片验证码的编号，并设置页面中图片验证码img标签的src属性
 		generate_image_code:function(){
 			//生成图片验证码的编号
-			this.image_code_id = this.generate_uuid()
+			this.image_code_id = this.generate_uuid();
 			//拼接要在html中设置的image的url
 			this.image_code_url = this.host + '/image_codes/' + this.image_code_id + '/';
 		},
