@@ -28,7 +28,7 @@ SECRET_KEY = '+le6qe&gip)!alb*j@h@t6)+83g65b2e1-8-s06p^u&u$1e*4h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.meiduo.site','127.0.0.1','www.meiduo.site']
 
 
 # Application definition
@@ -40,8 +40,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
+
     'rest_framework',
+    'users.apps.UsersConfig',
+    'verifications.apps.VerificationsConfig'
 ]
 
 MIDDLEWARE = [
@@ -103,7 +105,14 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
-    }
+    },
+    "verify_codes": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/2",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
 }
 #修改了Django的Session机制使用redis保存，且使用名为'session'的redis配置。
 #此处修改Django的Session机制存储主要是为了给Admin站点使用。
@@ -200,8 +209,13 @@ LOGGING = {
     }
 }
 
+#在配置文件中告知Django认证系统使用我们自定义的模型类。
+AUTH_USER_MODEL = 'users.User'
+
 #drf配置
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
+
+
