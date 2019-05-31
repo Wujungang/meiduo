@@ -24,7 +24,7 @@ class ImageCodeCheckSerializer(serializers.Serializer):
         #检查短信验证码的有效期
         mobile = self.context['view'].kwargs['mobile']
         send_flag = redis_conn.get('send_flag_%s'%mobile)
-        if not send_flag:
+        if send_flag:
             raise serializers.ValidationError('请求次数过于频繁')
         return attrs
 

@@ -25,7 +25,7 @@ class SMSCodeView(GenericAPIView):
     def get(self,request,mobile):
         #校验参数
         serializer = self.get_serializer(data = request.query_params)
-        serializer.is_valid(raise_exceptions = True)
+        serializer.is_valid(raise_exception = True)
         #生成短信验证码
         sms_code ='%06d'%random.randint(0,999999)
         #保存短信验证码
