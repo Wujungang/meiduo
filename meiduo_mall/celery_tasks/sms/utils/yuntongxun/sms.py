@@ -1,7 +1,9 @@
 # -*- coding:utf-8 -*-
 import ssl
-ssl.match_hostname = lambda cert, hostname: True
 from .CCPRestSDK import REST
+
+ssl._create_default_https_context = ssl._create_unverified_context
+
 
 # 说明：主账号，登陆云通讯网站后，可在"控制台-应用"中看到开发者主账号ACCOUNT SID
 _accountSid = '8aaf0708639129c40163a0f41dc90a54'
@@ -12,13 +14,8 @@ _accountToken = '885afd97b2d34954a221fbcd6116e52b'
 # 请使用管理控制台首页的APPID或自己创建应用的APPID
 _appId = '8aaf0708639129c40163a0f41e1c0a5a'
 
-
-
-ssl._create_default_https_context = ssl._create_unverified_context
-
 # 说明：请求地址，生产环境配置成app.cloopen.com
-# _serverIP = 'sandboxapp.cloopen.com'
-_serverIP = 'app.cloopen.com'
+_serverIP = 'sandboxapp.cloopen.com'
 
 # 说明：请求端口 ，生产环境为8883
 _serverPort = "8883"
@@ -50,11 +47,8 @@ _softVersion = '2013-12-26'
 
 class CCP(object):
     """发送短信的辅助类"""
-    ssl._create_default_https_context = ssl._create_unverified_context
-
 
     def __new__(cls, *args, **kwargs):
-        ssl._create_default_https_context = ssl._create_unverified_context
         # 判断是否存在类属性_instance，_instance是类CCP的唯一对象，即单例
         if not hasattr(CCP, "_instance"):
             cls._instance = super(CCP, cls).__new__(cls, *args, **kwargs)
@@ -64,15 +58,12 @@ class CCP(object):
         return cls._instance
 
     def send_template_sms(self, to, datas, temp_id):
-        ssl._create_default_https_context = ssl._create_unverified_context
         """发送模板短信"""
         # @param to 手机号码
         # @param datas 内容数据 格式为数组 例如：{'12','34'}，如不需替换请填 ''
         # @param temp_id 模板Id
         result = self.rest.sendTemplateSMS(to, datas, temp_id)
-        print('haha',result)
         print(result)
-        print('hehe')
         # 如果云通讯发送短信成功，返回的字典数据result中statuCode字段的值为"000000"
         if result.get("statusCode") == "000000":
             # 返回0 表示发送短信成功

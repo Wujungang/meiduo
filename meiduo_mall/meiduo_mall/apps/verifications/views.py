@@ -11,9 +11,11 @@ import logging
 
 from meiduo_mall.libs.captcha.captcha import captcha
 from django_redis import get_redis_connection
-from utils.yuntongxun.sms import CCP
+from meiduo_mall.utils.yuntongxun.sms import CCP
 from . import serializers
 from verifications import constants
+# from celery_tasks.sms import tasks as sms_tasks
+from celery_tasks.sms.tasks import send_sms_code
 
 logger = logging.getLogger('django')
 
@@ -51,6 +53,7 @@ class SMSCodeView(GenericAPIView):
         #         logger.warning("发送验证码短信[失败][ mobile: %s ]" % mobile)
         #         return Response({'message': 'failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         print(sms_code)
+        send_sms_code.delay(mobile,sms_code)
         return Response({'message': 'OK'})
 
 
