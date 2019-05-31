@@ -17,7 +17,7 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 sys.path.insert(0, os.path.join(BASE_DIR,'apps'))
-print(sys.path)
+# print(sys.path)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -28,7 +28,7 @@ SECRET_KEY = '+le6qe&gip)!alb*j@h@t6)+83g65b2e1-8-s06p^u&u$1e*4h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.meiduo.site','127.0.0.1','www.meiduo.site']
 
 
 # Application definition
@@ -40,11 +40,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
+
+    'corsheaders',
     'rest_framework',
+    'users.apps.UsersConfig',
+    'verifications.apps.VerificationsConfig',
+
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -52,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
 ]
 
 ROOT_URLCONF = 'meiduo_mall.urls'
@@ -103,7 +109,14 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
-    }
+    },
+    "verify_codes": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/2",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
 }
 #修改了Django的Session机制使用redis保存，且使用名为'session'的redis配置。
 #此处修改Django的Session机制存储主要是为了给Admin站点使用。
@@ -200,8 +213,25 @@ LOGGING = {
     }
 }
 
+#在配置文件中告知Django认证系统使用我们自定义的模型类。
+AUTH_USER_MODEL = 'users.User'
+
 #drf配置
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
+
+
+# CORS
+CORS_ORIGIN_WHITELIST = (
+    # '127.0.0.1:8080',
+    # 'localhost:8080',
+    # 'www.meiduo.site:8080',
+    # 'api.meiduo.site:8000',
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8000'
+)
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
