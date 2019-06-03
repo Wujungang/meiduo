@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
 from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
@@ -7,6 +8,11 @@ from users.models import User
 from . import serializers
 # Create your views here.
 
+
+
+def favicon(request):
+    print(123555)
+    return redirect('/static/favicon.ico')
 
 class UserView(CreateAPIView):
     serializer_class = serializers.CreateUserSerializer

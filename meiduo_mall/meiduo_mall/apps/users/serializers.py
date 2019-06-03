@@ -39,7 +39,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return value
 
     def validate_allow(self,value):
-        if value != True:
+        if value != 'true':
             raise serializers.ValidationError('请同意用户协议')
         return value
 
@@ -50,6 +50,7 @@ class CreateUserSerializer(serializers.ModelSerializer):
         redis_conn = get_redis_connection('verify_codes')
         mobile = attrs['mobile']
         real_sms_code = redis_conn.get('sms_%s'%mobile)
+        real_sms_code = real_sms_code.decode()
         if not real_sms_code:
             raise serializers.ValidationError('短信验证码不存在')
         if attrs['sms_code'] != real_sms_code:
@@ -57,9 +58,11 @@ class CreateUserSerializer(serializers.ModelSerializer):
         return attrs
 
     def create(self, validated_data):
+        print(5678)
         del validated_data['password2']
         del validated_data['sms_code']
         del validated_data['allow']
         user = User.objects.create(**validated_data)
+        user.set_password(validated_data['password'])
         user.save()
         return user

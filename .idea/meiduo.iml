@@ -5,6 +5,7 @@
       <sourceFolder url="file://$MODULE_DIR$/meiduo_mall/meiduo_mall" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/meiduo_mall/meiduo_mall/apps" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/meiduo_mall" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/meiduo_mall/meiduo_mall/templates" isTestSource="false" />
     </content>
     <orderEntry type="jdk" jdkName="Python 3.5 (django_1.11.1)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />

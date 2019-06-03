@@ -196,7 +196,7 @@ var vm = new Vue({
                     this.sending_flag = false;
                 })
         },
-        // 注册
+          // 注册
         on_submit: function(){
             this.check_username();
             this.check_pwd();
@@ -233,7 +233,6 @@ var vm = new Vue({
                         }
                     })
             }
-
         }
     }
 });
