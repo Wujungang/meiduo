@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <!--<script type="text/javascript" src="js/hosts.js"></script>-->
+    <script type="text/javascript" src="vue-2.5.16.js"></script>
+    <!--<script type="text/javascript" src="js/axios-0.18.0.min.js"></script>-->
+    <script>
+        window.onload = function () {
+            var vm = new Vue({
+            el:'#one',
+            data:{},
+            mounted:function () {
+
+            },
+            methods:{
+                add:function () {
+                    alert('ok')
+                }
+            }
+        })
+        }
+    </script>
+</head>
+<body>
+<div id="one">
+    <input type="text" @blur="add">
+</div>
+
+</body>
+</html>
