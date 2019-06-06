@@ -1,10 +1,36 @@
 import re
 
+from django.conf import settings
+from django.core.mail import send_mail
 from django_redis import get_redis_connection
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
-
+from celery_tasks.email.tasks import send_active_email
 from users.models import User
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','email')
+
+    def update(self, instance, validated_data):
+        instance.email = validated_data['email']
+        instance.save()
+        to_email = validated_data['email']
+        verify_url = instance.generate_verify_email_url()
+        # send_active_email.delay(email,verify_url)
+
+        subject = "美多商城邮箱验证"
+        html_message = '<p>尊敬的用户您好！</p>' \
+                       '<p>感谢您使用美多商城。</p>' \
+                       '<p>您的邮箱为：%s 。请点击此链接激活您的邮箱：</p>' \
+                       '<p><a href="%s">%s<a></p>' % (to_email, verify_url, verify_url)
+        send_mail(subject, "", settings.EMAIL_FROM, [to_email], html_message=html_message)
+
+        return instance
+
+
 
 class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:

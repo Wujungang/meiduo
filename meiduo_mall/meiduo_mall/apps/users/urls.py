@@ -9,7 +9,9 @@ from django.views.generic import RedirectView
 urlpatterns = [
     url(r'^favicon.ico/$', RedirectView.as_view(url=r'/static/favicon.ico')),
     # url(r'^favicon.ico/', views.favicon),
+    url(r'^emails/verification/$', views.VerifyEmailView.as_view()),
     url(r'^users/$', views.UserView.as_view()),
+    url(r'^email/$', views.EmailView.as_view()),
     url(r'^user/$', views.UserDetailView.as_view()),
     url(r'^usernames/(?P<username>\w{5,20})/count/$',views.UsernameCountView.as_view()),
     url(r'^mobiles/(?P<mobile>1[3-9]\d{9})/count/$', views.MobileCountView.as_view()),

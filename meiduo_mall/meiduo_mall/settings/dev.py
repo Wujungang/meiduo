@@ -260,3 +260,15 @@ QQ_CLIENT_ID = '101586671'
 QQ_CLIENT_SECRET = '1359daa6bc6cfe5c219d010d563fe279'
 QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
 QQ_STATE = '/'
+
+#发送邮件配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+#发送邮件的邮箱
+EMAIL_HOST_USER = 'wujungang2011@126.com'
+#在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = '123456789abc'
+#收件人看到的发件人
+EMAIL_FROM = 'wujungang2011@126.com'
+# DEFAULT_FROM_EMAIL = 'wujungang2011@126.com'
