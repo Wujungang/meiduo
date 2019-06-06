@@ -5,19 +5,24 @@
 	<title>美多商城-首页</title>
 	<link rel="stylesheet" type="text/css" href="css/reset.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
-	<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>
-	<script type="text/javascript" src="js/slide.js"></script>
+	<script type="text/javascript" src="js/vue-2.5.16.js"></script>
+    <!--<script type="text/javascript" src="js/axios-0.18.0.min.js"></script>-->
+	<!--<script type="text/javascript" src="js/jquery-1.12.4.min.js"></script>-->
+	<!--<script type="text/javascript" src="js/slide.js"></script>-->
+	<!--<script type="text/javascript" src="js/hosts.js"></script>-->
+    <script type="text/javascript" src="js/index.js"></script>
+
 </head>
 <body>
 	<div class="header_con">
 		<div class="header">
 			<div class="welcome fl">欢迎来到美多商城!</div>
-			<div class="fr">
-				<div class="login_info fl">
+			<div class="fr" id="app">
+				<div v-if="show_name" class="login_info fl">
 					欢迎您：<em>张 山</em>
 					<a href="javascript:;" class="quit">退出</a>
 				</div>
-				<div class="login_btn fl">
+				<div v-else class="login_btn fl">
 					<a href="login.html">登录</a>
 					<span>|</span>
 					<a href="register.html">注册</a>
@@ -578,5 +583,9 @@
 		<p>CopyRight © 2016 北京美多商业股份有限公司 All Rights Reserved</p>
 		<p>电话：010-****888    京ICP备*******8号</p>
 	</div>
+	<!--<script type="text/javascript" src="js/hosts.js"></script>-->
+    <!--<script type="text/javascript" src="js/index.js"></script>-->
 </body>
+	<!--<script type="text/javascript" src="js/hosts.js"></script>-->
+    <!--<script type="text/javascript" src="js/index.js"></script>-->
 </html>

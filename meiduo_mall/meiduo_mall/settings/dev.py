@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
+import datetime
 import os
 import sys
 
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
+    'oauth.apps.OauthConfig'
 
 ]
 
@@ -220,10 +221,21 @@ AUTH_USER_MODEL = 'users.User'
 
 #drf配置
 REST_FRAMEWORK = {
+    #认证系统
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+            'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+            'rest_framework.authentication.SessionAuthentication',
+            'rest_framework.authentication.BasicAuthentication',
+        ),
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
 }
+#设置token的过期时间
+JWT_AUTH = {
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
 
+}
 
 # CORS
 CORS_ORIGIN_WHITELIST = (
@@ -237,3 +249,26 @@ CORS_ORIGIN_WHITELIST = (
     'http://api.meiduo.site:8000'
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+
+#告知Django使用我们自定义的认证后端
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend',
+]
+
+# QQ登录参数
+QQ_CLIENT_ID = '101586671'
+QQ_CLIENT_SECRET = '1359daa6bc6cfe5c219d010d563fe279'
+QQ_REDIRECT_URI = 'http://www.meiduo.site:8080/oauth_callback.html'
+QQ_STATE = '/'
+
+#发送邮件配置
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.126.com'
+EMAIL_PORT = 25
+#发送邮件的邮箱
+EMAIL_HOST_USER = 'wujungang2011@126.com'
+#在邮箱中设置的客户端授权密码
+EMAIL_HOST_PASSWORD = '123456789abc'
+#收件人看到的发件人
+EMAIL_FROM = 'wujungang2011@126.com'
+# DEFAULT_FROM_EMAIL = 'wujungang2011@126.com'
