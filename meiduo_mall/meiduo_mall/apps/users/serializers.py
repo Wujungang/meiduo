@@ -6,6 +6,12 @@ from rest_framework_jwt.settings import api_settings
 
 from users.models import User
 
+class UserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id','username','mobile','email','email_active')
+
+
 
 class CreateUserSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(label='确认密码',write_only=True)

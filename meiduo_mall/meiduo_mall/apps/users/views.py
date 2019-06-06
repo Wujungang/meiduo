@@ -1,12 +1,22 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from rest_framework.generics import CreateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from users.models import User
 from . import serializers
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
+
+class UserDetailView(RetrieveAPIView):
+    serializer_class = serializers.UserDetailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
 
 
 
