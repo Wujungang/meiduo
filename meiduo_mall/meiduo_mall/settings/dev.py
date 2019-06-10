@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
-    'oauth.apps.OauthConfig'
+    'oauth.apps.OauthConfig',
+    'areas.apps.AreasConfig',
 
 ]
 
@@ -272,3 +273,12 @@ EMAIL_HOST_PASSWORD = '123456789abc'
 #收件人看到的发件人
 EMAIL_FROM = 'wujungang2011@126.com'
 # DEFAULT_FROM_EMAIL = 'wujungang2011@126.com'
+
+
+# DRF扩展
+REST_FRAMEWORK_EXTENSIONS = {
+    # 缓存时间
+    'DEFAULT_CACHE_RESPONSE_TIMEOUT': 60 * 60,
+    # 缓存存储
+    'DEFAULT_USE_CACHE': 'default',
+}

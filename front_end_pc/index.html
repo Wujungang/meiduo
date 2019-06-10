@@ -18,11 +18,11 @@
 		<div class="header">
 			<div class="welcome fl">欢迎来到美多商城!</div>
 			<div class="fr" id="app">
-				<div v-if="show_name" class="login_info fl">
-					欢迎您：<em>张 山</em>
+				<div v-show="show_name" class="login_info fl">
+					欢迎您：<em>{{username}}</em>
 					<a href="javascript:;" class="quit">退出</a>
 				</div>
-				<div v-else class="login_btn fl">
+				<div v-show="show_reg" class="login_btn fl">
 					<a href="login.html">登录</a>
 					<span>|</span>
 					<a href="register.html">注册</a>
@@ -584,7 +584,7 @@
 		<p>电话：010-****888    京ICP备*******8号</p>
 	</div>
 	<!--<script type="text/javascript" src="js/hosts.js"></script>-->
-    <!--<script type="text/javascript" src="js/index.js"></script>-->
+    <script type="text/javascript" src="js/index.js"></script>
 </body>
 	<!--<script type="text/javascript" src="js/hosts.js"></script>-->
     <!--<script type="text/javascript" src="js/index.js"></script>-->

@@ -43,7 +43,7 @@ class UserDetailView(RetrieveAPIView):
         return self.request.user
 
 def favicon(request):
-    print(123555)
+    # print(123555)
     return redirect('/static/favicon.ico')
 
 class UserView(CreateAPIView):
