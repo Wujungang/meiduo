@@ -6,7 +6,7 @@ from .models import Area
 from .serializers import AreaSerializer,SubAreaSerializer
 # Create your views here.
 
-class AreasViewSet(CacheResponseMixin,ReadOnlyModelViewSet):
+class AreasViewSet(ReadOnlyModelViewSet):
     pagination_class = None
 
     def get_queryset(self):
