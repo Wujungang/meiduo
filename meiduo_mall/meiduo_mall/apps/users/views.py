@@ -1,14 +1,66 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
-from rest_framework import status
+from rest_framework import status, mixins
+from rest_framework.decorators import action
 from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
+from rest_framework.viewsets import GenericViewSet
+
 from users.models import User
-from . import serializers
-from rest_framework.permissions import IsAuthenticated
+from . import serializers,constants
+from rest_framework.permissions import IsAuthenticated,IsAdminUser
+
 # Create your views here.
+
+class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,mixins.ListModelMixin, GenericViewSet):
+    serializer_class = serializers.UserAddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return self.request.user.addresses.filter(is_deleted=False)
+
+    def list(self,request,*args,**kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset,many=True)
+        user = self.request.user
+        return Response({
+            'user_id': user.id,
+            'default_address_id': user.default_address_id,
+            'limit': constants.USER_ADDRESS_COUNTS_LIMIT,
+            'addresses': serializer.data,
+        })
+
+    def create(self, request, *args, **kwargs):
+        count = request.user.addresses.count()
+        if count > constants.USER_ADDRESS_COUNTS_LIMIT:
+            return Response({'message':'保存地址数据已经达到上限'},status=status.HTTP_400_BAD_REQUEST)
+        return super().create(request,*args,**kwargs)
+
+    def destroy(self,request,*args,**kwargs):
+        address = self.get_object()
+        address.is_deleted = True
+        address.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    #保存默认地址
+    @action(methods=['put'], detail=True)
+    def status(self, request, pk=None, address_id=None):
+        address = self.get_object()
+        user = request.user
+        user.default_address = address
+        user.save()
+        return Response({'message':'保存用户默认地址成功'},status=status.HTTP_200_OK)
+
+    #更新标题
+    @action(methods=['put'], detail=True)
+    def title(self, request, pk=None, address_id=None):
+        address = self.get_object()
+        serializer = serializers.AddressTitleSerializer(instance=address, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data)
 
 
 class VerifyEmailView(APIView):
@@ -43,7 +95,6 @@ class UserDetailView(RetrieveAPIView):
         return self.request.user
 
 def favicon(request):
-    # print(123555)
     return redirect('/static/favicon.ico')
 
 class UserView(CreateAPIView):

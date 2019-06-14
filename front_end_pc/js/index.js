@@ -1,25 +1,32 @@
+
+
 var vm = new Vue({
-    el: "#app",
-    data:{
-        show_name:false,
-        show_reg:true,
+    el: '#app',
+    delimiters: ['[[', ']]'],
+    data: {
+        host,
+        username: sessionStorage.username || localStorage.username,
         user_id: sessionStorage.user_id || localStorage.user_id,
         token: sessionStorage.token || localStorage.token,
-        username: sessionStorage.username || localStorage.username,
+        cart_total_count: 0, // 购物车总数量
+        cart: [], // 购物车数据,
+        f1_tab: 1, // 1F 标签页控制
+        f2_tab: 1, // 2F 标签页控制
+        f3_tab: 1, // 3F 标签页控制
     },
     mounted: function(){
-       this.change()
+        this.get_cart();
     },
-    methods:{
-        change:function () {
-            if(this.user_id){
-            this.show_name= true;
-            this.show_reg=false
-            }
-            else{
-                this.show_name= false;
-                this.show_reg = true
-            }
+    methods: {
+        // 退出
+        logout: function(){
+            sessionStorage.clear();
+            localStorage.clear();
+            location.href = '/login.html';
+        },
+        // 获取购物车数据
+        get_cart: function(){
+
         }
     }
 });

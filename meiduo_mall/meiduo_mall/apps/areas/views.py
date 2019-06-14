@@ -7,6 +7,7 @@ from .serializers import AreaSerializer,SubAreaSerializer
 # Create your views here.
 
 class AreasViewSet(ReadOnlyModelViewSet):
+    #禁止分页
     pagination_class = None
 
     def get_queryset(self):
