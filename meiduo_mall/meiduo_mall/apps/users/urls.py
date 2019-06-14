@@ -1,4 +1,5 @@
 from django.conf.urls import url
+from rest_framework.routers import DefaultRouter
 from rest_framework_jwt.views import obtain_jwt_token
 
 from . import views
@@ -17,3 +18,6 @@ urlpatterns = [
     url(r'^mobiles/(?P<mobile>1[3-9]\d{9})/count/$', views.MobileCountView.as_view()),
     url(r'authorizations/$',obtain_jwt_token)
 ]
+router = DefaultRouter()
+router.register(r'addresses',views.AddressViewSet,base_name='addresses')
+urlpatterns += router.urls
