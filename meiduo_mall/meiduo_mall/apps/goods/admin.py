@@ -11,6 +11,12 @@ class SKUAdmin(admin.ModelAdmin):
         from celery_tasks.html.tasks import generate_static_sku_detail_html
         generate_static_sku_detail_html.delay(obj.id)
 
+class GoodsAdmin(admin.ModelAdmin):
+    def save_model(self, request, obj, form, change):
+        obj.save()
+        from celery_tasks.html.tasks import generate_static_sku_detail_html
+        generate_static_sku_detail_html.delay(obj.id)
+
 
 class SKUSpecificationAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
@@ -41,12 +47,11 @@ class SKUImageAdmin(admin.ModelAdmin):
         sku_id = obj.sku.id
         obj.delete()
         from celery_tasks.html.tasks import generate_static_sku_detail_html
-        print(123)
         generate_static_sku_detail_html.delay(sku_id)
 
 admin.site.register(models.GoodsCategory)
 admin.site.register(models.GoodsChannel)
-admin.site.register(models.Goods)
+admin.site.register(models.Goods,GoodsAdmin)
 admin.site.register(models.Brand)
 admin.site.register(models.GoodsSpecification)
 admin.site.register(models.SpecificationOption)

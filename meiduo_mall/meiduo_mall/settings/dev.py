@@ -297,10 +297,24 @@ FDFS_CLIENT_CONF = os.path.join(BASE_DIR, 'utils/fastdfs/client.conf')
 
 # 富文本编辑器ckeditor配置
 CKEDITOR_CONFIGS = {
+
+
+
     'default': {
         'toolbar': 'full',  # 工具条功能
         'height': 300,  # 编辑器高度
+        # 'skin': 'moono-lisa',
         # 'width': 300,  # 编辑器宽
+    # # 添加按钮在这里
+        'toolbar_Custom': [
+            ['Bold', 'Italic', 'Underline', 'Format', 'RemoveFormat'],
+            ['NumberedList', 'BulletedList'],
+            ['Blockquote', 'CodeSnippet'],
+            ['Image', 'Link', 'Unlink'],
+            ['Maximize']
+        ],
+    #     # 插件
+        'extraPlugins': ','.join(['codesnippet','uploadimage','widget','lineutils',]),
     },
 }
 CKEDITOR_UPLOAD_PATH = ''  # 上传图片保存路径，使用了FastDFS，所以此处设为''
