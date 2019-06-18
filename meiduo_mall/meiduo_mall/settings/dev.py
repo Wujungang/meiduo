@@ -121,9 +121,17 @@ CACHES = {
             "LOCATION": "redis://127.0.0.1:6379/2",
             "OPTIONS": {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+    },
+    "history": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/3",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
             }
-        }
-}
+        },
+    }
+
 #修改了Django的Session机制使用redis保存，且使用名为'session'的redis配置。
 #此处修改Django的Session机制存储主要是为了给Admin站点使用。
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
@@ -234,6 +242,8 @@ REST_FRAMEWORK = {
         ),
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
+    # 分页
+    'DEFAULT_PAGINATION_CLASS': 'meiduo_mall.utils.pagination.StandardResultsSetPagination',
 }
 #设置token的过期时间
 JWT_AUTH = {
