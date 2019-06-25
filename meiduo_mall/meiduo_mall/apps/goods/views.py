@@ -3,6 +3,14 @@ from rest_framework.filters import OrderingFilter
 from rest_framework.generics import ListAPIView
 from goods.models import SKU
 from . import serializers
+from drf_haystack.viewsets import HaystackViewSet
+
+
+class SKUSearchViewSet(HaystackViewSet):
+    index_models = [SKU]
+    serializer_class = serializers.SKUIndexSerializer
+
+
 
 class SKUListView(ListAPIView):
     serializer_class = serializers.SKUSerializer
