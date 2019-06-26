@@ -11,6 +11,40 @@ from goods.models import SKU
 from . import serializers
 
 
+class CartSelectAllView(APIView):
+    def perform_authentication(self, request):
+        pass
+    def put(self,request):
+        serializer = serializers.CartSelectAllSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        selected = serializer.validated_data['selected']
+        try:
+            user = request.user
+        except Exception:
+            user = None
+        if user is not None and user.is_authenticated:
+                redis_conn = get_redis_connection('cart')
+                sku_dict = redis_conn.hgetall('cart_%s'%user.id)
+                sku_id_list = sku_dict.keys()
+                if selected:
+                    redis_conn.sadd('cart_selected_%s'%user.id,*sku_id_list)
+                else:
+                    redis_conn.srem('cart_selected_%s'%user.id,*sku_id_list)
+                return Response({'message':'ok'})
+        else:
+            cart = request.COOKIES.get('cart')
+            cart = pickle.loads(base64.b64decode(cart.encode()))
+            for sku in cart:
+                if selected:
+                    cart[sku]['selected']=True
+                else:
+                    cart[sku]['selected'] = False
+            cart = base64.b64encode(pickle.dumps(cart)).decode()
+            response = Response({'message':'ok'})
+            response.set_cookie('cart',cart,max_age=60*60*60)
+            return response
+
+
 class CartView(APIView):
     def perform_authentication(self, request):
         pass
@@ -139,6 +173,7 @@ class CartView(APIView):
             sku.selected = cart[sku.id]['selected']
         #序列化商品数据
         serializer = serializers.CartSKUSerializer(skus,many=True)
+        print(serializer.data)
         #返回商品数据信息
         return Response(serializer.data)
 
