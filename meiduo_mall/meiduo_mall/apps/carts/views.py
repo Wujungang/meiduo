@@ -15,6 +15,35 @@ class CartView(APIView):
     def perform_authentication(self, request):
         pass
 
+    def delete(self,request):
+        serializer = serializers.CartDeleteSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        sku_id = serializer.validated_data['sku_id']
+        try:
+            user = request.user
+        except Exception:
+            user = None
+
+        if user is not None and user.is_authenticated:
+            redis_conn = get_redis_connection('cart')
+            pl = redis_conn.pipeline()
+            pl.hdel('cart_%s'%user.id,sku_id)
+            pl.srem('cart_selected_%s'%user.id,sku_id)
+            pl.execute()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        else:
+            response = Response(status=status.HTTP_204_NO_CONTENT)
+            cart = request.COOKIES.get('cart')
+            if cart is not None:
+                cart = pickle.loads(base64.b64decode(cart.encode()))
+                print(cart)
+                if sku_id in cart:
+                    del cart[sku_id]
+                    cart = base64.b64encode(pickle.dumps(cart)).decode()
+                # response = Response(serializer.data)
+                    response.set_cookie('cart',cart,max_age=60*60*60)
+            return response
+
     def put(self,request):
         serializer =serializers.CatSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -82,14 +111,14 @@ class CartView(APIView):
             #从redis中的hash中获取所有的商品id及数量
             cart_dict = redis_conn.hgetall('cart_%s'%user.id)
             #从redis中获取所有商品的勾选状态
-            select_list = redis_conn.smember('cart_selected_%s'%user.id)
+            select_list = redis_conn.smembers('cart_selected_%s'%user.id)
             #创建空的字典
             cart = {}
             #遍历商品数据
             for sku_id,count in cart_dict.items():
                 # 形成商品字典
-                cart[sku_id] = {
-                    'count':count,
+                cart[int(sku_id)] = {
+                    'count':int(count),
                     'selected':sku_id in select_list
                 }
         #用户未登录
