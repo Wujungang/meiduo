@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 # Create your views here.
+from goods.models import SKU
 from . import serializers
 
 
@@ -39,18 +40,22 @@ class CartView(APIView):
         else:
             #从cookie中获取商品信息
             cart = request.COOKIES.get('cart')
-            #获取购物车数据
-            cart = pickle.loads(base64.b64decode(cart.encode()))
+            if cart:
+                #获取购物车数据
+                cart = pickle.loads(base64.b64decode(cart.encode()))
+            else:
+                cart = {}
         #获取所有商品的对象查询集
-
+        skus = SKU.objects.filter(id__in=cart.keys())
         #遍历商品对象
-
+        for sku in skus:
             #更新商品的数量以及勾选状态
-
+            sku.count = cart[sku.id]['count']
+            sku.selected = cart[sku.id]['selected']
         #序列化商品数据
-
+        serializer = serializers.CartSKUSerializer(skus,many=True)
         #返回商品数据信息
-
+        return Response(serializer.data)
 
     def post(self,request):
         #获取序列化器
