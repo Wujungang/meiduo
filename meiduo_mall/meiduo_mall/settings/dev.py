@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'oauth.apps.OauthConfig',
     'areas.apps.AreasConfig',
     'goods.apps.GoodsConfig',
+    'carts.apps.CartsConfig',
     'contents.apps.ContentsConfig',
     'ckeditor',  # 富文本编辑器
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
@@ -131,6 +132,13 @@ CACHES = {
                 "CLIENT_CLASS": "django_redis.client.DefaultClient",
             }
         },
+    "cart": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": "redis://127.0.0.1:6379/4",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            }
+        }
     }
 
 #修改了Django的Session机制使用redis保存，且使用名为'session'的redis配置。
@@ -355,3 +363,5 @@ HAYSTACK_CONNECTIONS = {
 
 # 当添加、修改、删除数据时，自动生成索引
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+# CORS_ALLOW_CREDENTIALS = True
