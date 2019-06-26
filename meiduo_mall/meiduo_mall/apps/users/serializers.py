@@ -6,7 +6,49 @@ from django_redis import get_redis_connection
 from rest_framework import serializers
 from rest_framework_jwt.settings import api_settings
 from celery_tasks.email.tasks import send_active_email
+from goods.models import SKU
 from users.models import User, Address
+
+class SKUSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SKU
+        fields = ('id', 'name', 'price', 'default_image_url', 'comments')
+
+
+class AddUserBrowsingHistorySerializer(serializers.Serializer):
+    sku_id = serializers.IntegerField(label='商品编号',min_value=1)
+
+    def validate_sku_id(self,value):
+        try:
+            sku = SKU.objects.get(id=value)
+        except SKU.DoesNotExist:
+            raise serializers.ValidationError('该商品不存在')
+        return value
+
+    def create(self, validated_data):
+        #获取用户id
+        user_id =self.context['request'].user.id
+        #获取sku_id
+        sku_id = validated_data['sku_id']
+
+        #获取redis连接
+        redis_conn = get_redis_connection('history')
+        pl = redis_conn.pipeline()
+        #首先移除已存在的商品浏览记录
+        pl.lrem('history_%s'%user_id,0,sku_id)
+
+        #添加新的浏览记录
+        pl.lpush('history_%s'%user_id,sku_id)
+
+
+        #只保存最多五条记录
+        pl.ltrim('history_%s'%user_id,0,4)
+
+        pl.execute()
+        return validated_data
+
+
+
 
 
 class UserAddressSerializer(serializers.ModelSerializer):
@@ -49,14 +91,14 @@ class EmailSerializer(serializers.ModelSerializer):
         instance.save()
         to_email = validated_data['email']
         verify_url = instance.generate_verify_email_url()
-        # send_active_email.delay(email,verify_url)
+        send_active_email.delay(to_email,verify_url)
 
-        subject = "美多商城邮箱验证"
-        html_message = '<p>尊敬的用户您好！</p>' \
-                       '<p>感谢您使用美多商城。</p>' \
-                       '<p>您的邮箱为：%s 。请点击此链接激活您的邮箱：</p>' \
-                       '<p><a href="%s">%s<a></p>' % (to_email, verify_url, verify_url)
-        send_mail(subject, "", settings.EMAIL_FROM, [to_email], html_message=html_message)
+        # subject = "美多商城邮箱验证"
+        # html_message = '<p>尊敬的用户您好！</p>' \
+        #                '<p>感谢您使用美多商城。</p>' \
+        #                '<p>您的邮箱为：%s 。请点击此链接激活您的邮箱：</p>' \
+        #                '<p><a href="%s">%s<a></p>' % (to_email, verify_url, verify_url)
+        # send_mail(subject, "", settings.EMAIL_FROM, [to_email], html_message=html_message)
 
         return instance
 

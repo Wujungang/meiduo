@@ -2,17 +2,44 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from rest_framework import status, mixins
 from rest_framework.decorators import action
-from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveAPIView, UpdateAPIView, GenericAPIView
 from rest_framework.response import Response
 from rest_framework.serializers import Serializer
 from rest_framework.views import APIView
 from rest_framework.viewsets import GenericViewSet
 
+from goods.models import SKU
 from users.models import User
 from . import serializers,constants
 from rest_framework.permissions import IsAuthenticated,IsAdminUser
-
+from django_redis import get_redis_connection
 # Create your views here.
+
+class UserBrowsingHistoryView(CreateAPIView):
+    serializer_class = serializers.AddUserBrowsingHistorySerializer
+    permission_classes = [IsAuthenticated]
+
+    # def post(self,request):
+    #     return self.create(request)
+    def get(self,request):
+        #获取用户id
+        user_id = request.user.id
+
+        #获取数据库连接方式
+        redis_conn = get_redis_connection('history')
+        #获取列表中的数据
+        history = redis_conn.lrange('history_%s'%user_id,0,4)
+        skus = []
+        for sku_id in history:
+            sku = SKU.objects.get(id=sku_id)
+            skus.append(sku)
+        s = serializers.SKUSerializer(skus,many=True)
+        return Response(s.data)
+
+
+
+
+
 
 class AddressViewSet(mixins.CreateModelMixin, mixins.UpdateModelMixin,mixins.ListModelMixin, GenericViewSet):
     serializer_class = serializers.UserAddressSerializer
