@@ -76,6 +76,8 @@ class SaveOrderSerializer(serializers.ModelSerializer):
                     sku.save()
                     sku.goods.sales +=sku_count
                     sku.goods.save()
+                    order.total_count += sku_count  # 累计总金额
+                    order.total_amount += (sku.price * sku_count)  # 累计总额
                     OrderGoods.objects.create(
                         order=order,
                         sku=sku,
