@@ -28,7 +28,19 @@ class PaymentStatusView(APIView):
             sign_type="RSA2",  # RSA 或者 RSA2
             debug=settings.ALIPAY_DEBUG  # 默认False
         )
-
+        #http://www.meiduo.site:8080/pay_success.html?
+        # charset=utf-8&
+        # out_trade_no=20190628022038000000001&
+        # method=alipay.trade.page.pay.return&
+        # total_amount=20374.00&
+        # sign=ES0N8xiA6VDNCx094D5YkNuGu%2FJ8D2m7cCRs2dNcA1FkYADI16JifqHJb1zgZ248C4ZFvbYL15v3%2F%2FnmegGpKmXoUGn36qdsQvwBtqBYz1d7rr6rvBmdtvNRbGDCpZqg2RvCNqMxGQr3g0o8baECaaOk23%2B6cvJeryW17TNttOVu4ogrQR4C2Bh8E9iq9Ks5UWaWpgL2mHWeYZjgB5%2BhfkooV1mjGoTxcsiMHIZGKj%2Bx6jrzhbi3yt%2FPpOu5MVL64%2BKAZd8K%2FYUbijSIUW2i87Xp5ri9eroHrd723k9zDZ6ZjwhJ402bwSVXvcYFPLIdwx%2BOi7jqr6GiGZjBx0ttNg%3D%3D&
+        # trade_no=2019062822001451771000092260&
+        # auth_app_id=2016091300505093&
+        # version=1.0&
+        # app_id=2016091300505093&
+        # sign_type=RSA2&
+        # seller_id=2088102175510789&
+        # timestamp=2019-06-28+10%3A21%3A55
         success = alipay.verify(data,signature)
         if success:
             order_id = data.get('out_trade_no')
@@ -75,4 +87,5 @@ class PaymentView(APIView):
         # 需要跳转到https://openapi.alipay.com/gateway.do? + order_string
         # 拼接链接返回前端
         alipay_url = settings.ALIPAY_URL + "?" + order_string
+        print(alipay_url)
         return Response({'alipay_url': alipay_url})
