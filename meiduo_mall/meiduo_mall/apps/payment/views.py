@@ -3,17 +3,44 @@ from alipay import AliPay
 from django.conf import settings
 from django.shortcuts import render
 
-# Create your views here.
 from requests import Response
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from orders.models import OrderInfo
+from payment.models import Payment
 
 
+class PaymentStatusView(APIView):
+    def put(self,request):
+        #获取查询字符串
+        data = request.query_params.dict()
+        #pop可以将data中的数据删除并返回删除后的对象
+        signature = data.pop('sign')
 
+        alipay = AliPay(
+            appid=settings.ALIPAY_APPID,
+            app_notify_url=None,  # 默认回调url
+            app_private_key_path=os.path.join(os.path.dirname(os.path.abspath(__file__)), "keys/app_private_key.pem"),
+            alipay_public_key_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                                "keys/alipay_public_key.pem"),  # 支付宝的公钥，验证支付宝回传消息使用，不是你自己的公钥,
+            sign_type="RSA2",  # RSA 或者 RSA2
+            debug=settings.ALIPAY_DEBUG  # 默认False
+        )
 
+        success = alipay.verify(data,signature)
+        if success:
+            order_id = data.get('out_trade_no')
+            trade_id = data.get('trade_no')
+            Payment.objects.create(
+                order_id=order_id,
+                trade_id=trade_id
+            )
+            OrderInfo.objects.filter(order_id=order_id, status=OrderInfo.ORDER_STATUS_ENUM['UNPAID']).update(status=OrderInfo.ORDER_STATUS_ENUM["UNCOMMENT"])
+            return Response({'trade_id': trade_id})
+        else:
+            return Response({'message': '非法请求'}, status=status.HTTP_403_FORBIDDEN)
 
 
 class PaymentView(APIView):
